@@ -1,0 +1,1 @@
+web: gunicorn CustomRegLog.wsgi --log-file -
