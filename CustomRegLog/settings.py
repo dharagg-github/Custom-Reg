@@ -122,8 +122,9 @@ USE_TZ = True
 
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+
 
 MEDIA_URL = '/profile_pic/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'profile_pic')
