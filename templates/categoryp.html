@@ -13,51 +13,40 @@
   <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-  <a class="navbar-brand" href="{% url 'doctor' %}">Home</a>
+  <a class="navbar-brand" href="{% url 'patient' %}">Home</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'add_post' %}">Create Blog <span class="sr-only">(current)</span></a>
-      </li>
-        <li class="nav-item">
-        <a class="nav-link" href="{% url 'myblog' %}">My Blogs</a>
-      </li>
-      {% if cat_menu %}
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Category
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            {% for i in cat_menu %}
-                <a class="dropdown-item" href="{% url 'categoryd' i %}">{{ i }}</a>
-            {% endfor %}
-        </div>
-      </li>
-      {% endif %}
     </ul>
   </div>
 </nav>
 
     <div class="container">
 
-    <h1>Posts</h1>
+    {% if category_posts %}
+
+    <h1>{{ cats }}</h1>
 
     <ul>
-        {% for post in object_list %}
-            {% if not post.draft %}
-                <li><a href="{% url 'article' post.pk %}">
-                    {{ post.title }}</a> - {{ post.author.user }}<br/>
+    {% for post in category_posts %}
+        {% if not post.draft %}
+        <li><a href="{% url 'article' post.pk %}">
+            {{ post.title }}</a> - {{ post.author.user }}<br/>
 
-                    {{ post.summary }}</li>
-            {% endif %}
-        {% endfor %}
-
+            {{ post.summary }}</li>
+        {% endif %}
+    {% endfor %}
     </ul>
-    <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+
+    {% else %}
+    <h2>Sorry this page does not Exists...</h2>
+    {% endif %}
+
+    <a href="{% url 'patient' %}" class="btn btn-primary">Back</a>
+
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

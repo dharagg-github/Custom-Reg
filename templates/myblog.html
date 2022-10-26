@@ -48,16 +48,13 @@
 
     <ul>
         {% for post in object_list %}
-            {% if not post.draft %}
-                <li><a href="{% url 'article' post.pk %}">
-                    {{ post.title }}</a> - {{ post.author.user }}<br/>
+        <li><a href="{% url 'article' post.pk %}">
+            {{ post.title }}  <small>{% if post.draft %}<span style="color:red;">Draft</span>{% endif %}</small></a> - {{ post.author.user }}<br/>
 
-                    {{ post.summary }}</li>
-            {% endif %}
+            {{ post.summary }}</li>
         {% endfor %}
 
     </ul>
-    <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

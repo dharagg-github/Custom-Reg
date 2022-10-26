@@ -2,9 +2,10 @@ from django.contrib.auth import login, logout,authenticate
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.views.generic import CreateView
-from .form import PatientSignUpForm, DoctorSignUpForm
+from .form import PatientSignUpForm, DoctorSignUpForm, PostForm
 from django.contrib.auth.forms import AuthenticationForm
-from .models import User
+from .models import User, Post, Category, Doctor
+from django.views.generic import ListView,DetailView,CreateView
 
 def index(request):
     return render(request, '../templates/index.html')
@@ -53,11 +54,51 @@ def login_request(request):
     return render(request, '../templates/login.html',
     context={'form':AuthenticationForm()})
 
-def patient(request):
-    return render(request, '../templates/patient.html')
+class patient(ListView):
+    model = Post
+    template_name = '../templates/patient.html'
 
-def doctor(request):
-    return render(request, '../templates/doctor.html')
+    def get_context_data(self, *args, **kwargs):
+        cat_menu = Category.objects.all()
+        context = super(patient, self).get_context_data(*args, **kwargs)
+        context["cat_menu"] = cat_menu
+        return context
+
+class doctor(ListView):
+    model = Post
+    template_name = '../templates/doctor.html'
+
+    def get_context_data(self, *args, **kwargs):
+        cat_menu = Category.objects.all()
+        context = super(doctor, self).get_context_data(*args, **kwargs)
+        context["cat_menu"] = cat_menu
+        return context
+
+def CategorydView(request, cats):
+    category_posts = Post.objects.filter(category=cats)
+    return render(request,'../templates/categoryd.html',{'cats':cats.title(), 'category_posts':category_posts})
+
+def CategorypView(request, cats):
+    category_posts = Post.objects.filter(category=cats)
+    return render(request,'../templates/categoryp.html',{'cats':cats.title(), 'category_posts':category_posts})
+
+class myblog(ListView):
+    model = Post
+    template_name = '../templates/myblog.html'
+
+    def get_queryset(self):
+        user = Doctor()
+        user.user = self.request.user
+        return Post.objects.filter(author=user)
+
+class article(DetailView):
+    model = Post
+    template_name = '../templates/article.html'
+
+class AddPostView(CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = '../templates/createblog.html'
 
 def logout_view(request):
     logout(request)

@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.db import transaction
-from .models import User,Patient,Doctor
+from .models import User,Patient,Doctor, Post, Category
+
 
 
 class PatientSignUpForm(UserCreationForm):
@@ -65,3 +66,17 @@ class DoctorSignUpForm(UserCreationForm):
         doctor.profile_pic = self.cleaned_data.get('profile_pic')
         doctor.save()
         return user
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ('title','author','category','summary','draft','content')
+
+        widget = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'author': forms.Select(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+            'summary': forms.TextInput(attrs={'class': 'form-control'}),
+            'draft': forms.BooleanField(),
+            'content': forms.Textarea(attrs={'class': 'form-control'}),
+        }
