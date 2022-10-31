@@ -8,24 +8,18 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-    <title>Blogs</title>
+    <title>Doctors</title>
   </head>
   <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-  <a class="navbar-brand" href="{% url 'doctor' %}">Home</a>
+  <a class="navbar-brand" href="{% url 'patient' %}">Home</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'add_post' %}">Create Blog <span class="sr-only">(current)</span></a>
-      </li>
-        <li class="nav-item">
-        <a class="nav-link" href="{% url 'myblog' %}">My Blogs</a>
-      </li>
 
       {% if cat_menu %}
       <li class="nav-item dropdown">
@@ -45,20 +39,31 @@
 
     <div class="container">
 
-    <h1>Posts</h1>
+        <div class="col-md-8">
 
-    <ul>
-        {% for post in object_list %}
-            {% if not post.draft %}
-                <li><a href="{% url 'article' post.pk %}">
-                    {{ post.title }}</a> - {{ post.author.user }}<br/>
+             <div class="tab-content profile-tab" id="myTabContent">
+                 {%for form in form %}
+                    <div class="row">
+                        <div class="col-md-4">
+                              <div class="card mb-4 box-shadow">
+                     <img class="card-img-top" src='{{form.profile_pic.url}}' alt="Card image cap">
+                        <input class="card-body">
+                            <h5 class="card-title">{{form.first_name}} {{form.last_name}}</h5>
+                                  <a href="{% url 'bookform' form.id %}"  type="submit" class = "btn btn-primary">Book Appointment</a>
+                            </div>
 
-                    {{ post.summary }}</li>
-            {% endif %}
-        {% endfor %}
+                              </div>
+                        </div>
+                    </div>
+                 {%endfor %}
+              </div>
+
+        </div>
+    </div>
 
     </ul>
-    <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+    <a href="{% url 'patient' %}" class="btn btn-primary">Back</a>
+
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -15,6 +15,10 @@ urlpatterns = [
     path('categoryd/<str:cats>/',views.CategorydView,name= 'categoryd'),
     path('categoryp/<str:cats>/',views.CategorypView,name= 'categoryp'),
     path('myblog/', myblog.as_view(), name='myblog'),
+    path('listdoctor/', views.listdoctor, name='listdoctor'),
+    path('bookform/<str:pk>/', views.bookform, name='bookform'),
+    path('confirm', views.confirm, name='confirm'),
+    path('viewevent', views.viewevent, name='viewevent'),
     path('logout/', views.logout_view, name='logout'),
 
 ]

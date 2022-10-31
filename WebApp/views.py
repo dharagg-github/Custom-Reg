@@ -4,8 +4,15 @@ from django.contrib import messages
 from django.views.generic import CreateView
 from .form import PatientSignUpForm, DoctorSignUpForm, PostForm
 from django.contrib.auth.forms import AuthenticationForm
-from .models import User, Post, Category, Doctor
+from .models import User, Post, Category, Doctor, Patient
 from django.views.generic import ListView,DetailView,CreateView
+
+import datetime
+from datetime import timedelta
+import pytz
+from apiclient.discovery import build
+import pickle
+
 
 def index(request):
     return render(request, '../templates/index.html')
@@ -99,6 +106,100 @@ class AddPostView(CreateView):
     model = Post
     form_class = PostForm
     template_name = '../templates/createblog.html'
+
+def listdoctor(request):
+    form = []
+    for doctor in Doctor.objects.all():
+        if doctor.user.is_doctor:
+            usr = {"first_name": doctor.user.first_name, "last_name": doctor.user.last_name, "profile_pic": doctor.profile_pic, "id":request.user.id, "did":doctor.user.id}
+            form.append(usr)
+
+    print(form)
+
+    return render(request,'listdoctor.html',{'form':form})
+
+
+def bookform(request, pk):
+    form = Patient.objects.get(user_id=pk)
+    if request.method == 'POST':
+        form = Doctor.objects.get(user_id=5)
+        print(form)
+        req = request.POST['req']
+        start = request.POST['start']
+        time = request.POST['time']
+        starts = start + ' ' + time + ':' '00'
+
+        start_time = datetime.datetime.strptime(starts, "%Y-%m-%d %H:%M:%S")
+        end_time = start_time + timedelta(minutes=45)
+        context = {'req': req, 'start': start, 'time': time, 'start_time': start_time, 'end_time': end_time,
+                   'form': form}
+        return render(request, 'confirm.html', context)
+
+    return render(request, 'bookform.html', {'form': form})
+
+
+start_time = 0
+end_time = 0
+
+scopes = ['https://www.googleapis.com/auth/calendar']
+
+credentials = pickle.load(open('C:\\Users\\DHARANEESH GG\\PycharmProjects\\CustomRegLog\\token.pkl', 'rb'))
+
+def confirm(request):
+    service = build("calendar", "v3", credentials=credentials)
+    if request.method == 'POST':
+        req = request.POST['required']
+        start = request.POST['starts']
+        time = request.POST['time']
+        start = start + ' ' + time + ':' '00'
+        start_time = datetime.datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
+        end_time = start_time + timedelta(minutes=45)
+        timezone = 'Asia/Kolkata'
+        print("Gsfgfd", start_time.isoformat(), 'vdfdf', end_time.isoformat())
+        print("dsdv", req)
+        event = (
+            service.events()
+                .insert(
+                calendarId="primary",
+                body={
+                    "summary": req,
+
+                    "start": {"dateTime": start_time.isoformat(),
+                              'timeZone': timezone,
+
+                              },
+                    "end": {
+                        "dateTime": end_time.isoformat(),
+                        'timeZone': timezone,
+                    }
+                },
+            )
+                .execute()
+        )
+
+        return redirect('patient')
+
+    return render(request, 'confirm.html')
+
+def viewevent(request):
+    service = build("calendar", "v3", credentials=credentials)
+    now = datetime.datetime.utcnow().isoformat() + 'Z'
+    events_result = service.events().list(calendarId='primary', timeMin=now,
+                                              maxResults=10, singleEvents=True,
+                                              orderBy='startTime').execute()
+    events = events_result.get('items', [])
+
+    if not events:
+        print('No upcoming events found.')
+        return
+
+        # Prints the start and name of the next 10 events
+    for event in events:
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        email = event['attendees'][0:]
+        print(start,email)
+
+    return render(request,'viewevent.html',{'form':start})
 
 def logout_view(request):
     logout(request)

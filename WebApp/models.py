@@ -57,3 +57,10 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('doctor')
 
+class Book(models.Model):
+    require = models.CharField(max_length=200,null=True)
+    start_time = models.DateField()
+    end_time = models.TimeField()
+
+
+
